@@ -1,0 +1,10 @@
+{
+    "name": "playground-service",
+    "type": "module",
+    "scripts": {
+        "start": "bun run src/server.ts"
+    },
+    "dependencies": {
+        "bun-types": "latest"
+    }
+}

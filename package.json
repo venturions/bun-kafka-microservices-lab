@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "bun run index.ts"
+    "start": "bun run services/api-gateway/server.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -14,6 +14,8 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "figlet": "^1.9.4"
+    "@types/express": "^5.0.6",
+    "express": "^5.2.1",
+    "zod": "^4.1.13"
   }
 }

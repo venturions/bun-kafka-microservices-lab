@@ -43,6 +43,70 @@ As fases abaixo podem ser feitas aos poucos (ex.: um pouco por dia).
 
 ---
 
+### Estrutura de Pastas Recomendada
+
+Para seguir Clean Architecture + Event-Driven, use dois níveis: raiz do monorepo e estrutura interna de cada serviço.
+
+```
+bun-kafka-microservices-lab/
+  docker/                    # docker-compose, overrides, scripts
+  infra/                     # manifests Kubernetes, diagramas, docs
+  libs/
+    event-contracts/         # schemas Zod/Avro dos eventos
+    shared-kafka/            # wrappers de producer/consumer (Bun)
+    shared-auth/             # helpers JWT, middlewares
+  services/
+    api-gateway/
+    order-service/
+    inventory-service/
+    payment-service/
+    notification-service/
+  tools/                     # scripts Bun para migrations, seeds, smoke tests
+  README.md
+```
+
+E dentro de cada `services/<nome>/`:
+
+```
+services/order-service/
+  src/
+    app/                     # use cases, DTOs, validadores Zod
+      use-cases/
+      dtos/
+      validators/
+    domain/                  # entidades e regras puras
+      entities/
+      events/
+      repositories/          # contratos de persistência
+      services/              # domain services específicos
+    infra/                   # adaptações externas
+      http/
+        routes/
+        controllers/
+        middlewares/
+      kafka/
+        consumers/
+        producers/
+      persistence/
+        prisma/
+          schema.prisma
+          migrations/
+        repositories/        # implementações concretas
+      config/                # env loader, providers
+    shared/                  # utilidades locais (logger, helpers)
+    main.ts                  # composição e injeção das dependências
+  tests/
+    unit/
+    integration/
+    contract/                # testes contra Kafka topics/schemas
+  package.json
+  Dockerfile
+```
+
+Essa base facilita evoluir o laboratório, mantendo separação clara entre domínio (agnóstico de frameworks), aplicação (use cases) e infraestrutura (HTTP, Kafka, Prisma).
+
+---
+
 ### Fase 0 – Setup Inicial
 
 **Objetivo:** preparar ambiente e contexto do projeto.
