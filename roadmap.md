@@ -274,6 +274,19 @@ Essa base facilita evoluir o laboratório, mantendo separação clara entre dom�
 
 ---
 
+### Fase 5.5 – Reverse Proxy (Nginx) e Camada Edge
+
+**Objetivo:** colocar uma camada de proxy reverso na frente do `api-gateway`, simulando como a aplicação seria exposta na borda em produção.
+
+- [ ] Adicionar serviço Nginx no `docker-compose`:
+  - TLS termination (mesmo que usando certificados self-signed).
+  - Balanceamento round-robin entre múltiplas réplicas do gateway (pode iniciar com duas instâncias).
+- [ ] Configurar rate limiting básico e headers de segurança (HSTS, X-Content-Type-Options, etc.).
+- [ ] (Opcional) Habilitar regras WAF simples (modsecurity ou Nginx App Protect quando fizer sentido).
+- [ ] Documentar a configuração em `docs/edge-layer.md`, explicando como portar para Kubernetes (Ingress Nginx ou equivalente).
+
+---
+
 ### Fase 6 – Kubernetes (Opcional / Avançado)
 
 **Objetivo:** ter uma versão simples rodando em Kubernetes.
