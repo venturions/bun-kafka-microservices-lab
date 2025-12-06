@@ -80,10 +80,11 @@ services/order-service/
       repositories/          # contratos de persistência
       services/              # domain services específicos
     infra/                   # adaptações externas
-      http/
-        routes/
-        controllers/
-        middlewares/
+      http/                  # adapters HTTP (Nest modules/controllers/pipes)
+        nest/
+          controllers/
+          providers/
+          filters/
       kafka/
         consumers/
         producers/
@@ -129,8 +130,8 @@ Essa base facilita evoluir o laboratório, mantendo separação clara entre dom�
 **Objetivo:** primeiro fluxo simples, ainda sem Kafka.
 
 - [ ] Criar `services/api-gateway`:
-  - Servidor HTTP com Bun.
-  - Endpoint `POST /orders` com validação básica (pode usar Zod depois).
+  - Aplicação HTTP com **NestJS + Fastify** rodando no Bun.
+  - Endpoint `POST /orders` com validação básica (pode usar Zod depois via pipes/adapters).
 - [ ] Criar `services/order-service`:
   - Servidor HTTP interno.
   - Endpoint `POST /internal/orders` que:
@@ -165,6 +166,25 @@ Essa base facilita evoluir o laboratório, mantendo separação clara entre dom�
 - [ ] Criar `docs/architecture-v2-kafka.md` explicando:
   - Como ficou o fluxo baseado em eventos.
   - Benefícios (menos acoplamento, assíncrono, etc.).
+
+---
+
+### Fase 2.5 – Observabilidade + Contratos de Eventos
+
+**Objetivo:** garantir rastreabilidade ponta a ponta e evolução segura dos eventos.
+
+- [ ] Subir stack de observabilidade mínima:
+  - `otel-collector` + `jaeger` via docker-compose.
+  - Configurar exporters OTLP/HTTP para traces e métricas.
+- [ ] Instrumentar `api-gateway` e `order-service` com OpenTelemetry:
+  - Adicionar SDK/auto-instrumentations (HTTP, Fastify, fetch).
+  - Propagar `traceparent`/`correlationId` nos cabeçalhos HTTP e nos eventos Kafka.
+  - Criar `docs/observability.md` explicando como visualizar spans e métricas.
+- [ ] Subir `schema-registry` (ex.: `confluentinc/cp-schema-registry`) junto do Kafka.
+- [ ] Criar biblioteca ou helper de serialização (Avro/JSON Schema) para os eventos:
+  - Registrar schemas (`order_created`, `inventory_reserved`, etc.) com compatibilidade backward.
+  - Atualizar produtores/consumidores para codificar/decodificar usando o Registry.
+- [ ] Documentar contratos em `docs/events-schemas.md` (versões, campos, políticas de compatibilidade).
 
 ---
 

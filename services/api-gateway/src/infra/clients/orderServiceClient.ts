@@ -1,15 +1,36 @@
+import { Injectable } from "@nestjs/common";
 import type { OrderRequest } from "../../app/dtos/OrderRequest";
 
-export type OrderServiceClient = {
-  createOrder: (payload: OrderRequest, correlationId: string) => Promise<any>;
-};
+export interface OrderResponse extends OrderRequest {
+  id: string;
+  status: string;
+  createdAt: string;
+}
 
-const ORDER_SERVICE_URL =
-  process.env.ORDER_SERVICE_URL ?? "http://localhost:3002/internal/orders";
+export interface OrderServiceClient {
+  createOrder(
+    payload: OrderRequest,
+    correlationId: string
+  ): Promise<OrderResponse>;
+}
 
-export const orderServiceClient: OrderServiceClient = {
-  async createOrder(payload, correlationId) {
-    const response = await fetch(ORDER_SERVICE_URL, {
+@Injectable()
+export class HttpOrderServiceClient implements OrderServiceClient {
+  private readonly orderServiceUrl =
+    process.env.ORDER_SERVICE_URL ?? "http://localhost:3002/internal/orders";
+
+  async createOrder(
+    payload: OrderRequest,
+    correlationId: string
+  ): Promise<OrderResponse> {
+    console.log(
+      "[api-gateway][HttpOrderServiceClient] Chamando order-service",
+      {
+        url: this.orderServiceUrl,
+        correlationId,
+      }
+    );
+    const response = await fetch(this.orderServiceUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -20,11 +41,27 @@ export const orderServiceClient: OrderServiceClient = {
 
     if (!response.ok) {
       const body = await response.text();
+      console.error(
+        "[api-gateway][HttpOrderServiceClient] order-service retornou erro",
+        {
+          correlationId,
+          status: response.status,
+          body,
+        }
+      );
       throw new Error(
         `order-service respondeu ${response.status}: ${body || "sem corpo"}`
       );
     }
 
-    return response.json();
-  },
-};
+    const data = (await response.json()) as OrderResponse;
+    console.log(
+      "[api-gateway][HttpOrderServiceClient] order-service respondeu com sucesso",
+      {
+        correlationId,
+        orderId: data.id,
+      }
+    );
+    return data;
+  }
+}

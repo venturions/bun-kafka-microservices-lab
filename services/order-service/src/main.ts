@@ -11,11 +11,11 @@ async function bootstrap() {
   );
 
   await app.listen({
-    port: Number(process.env.PORT ?? 3000),
+    port: Number(process.env.PORT ?? 3002),
     host: "0.0.0.0",
   });
 
-  console.log(`API Gateway rodando em ${await app.getUrl()}`);
+  console.log(`Order Service rodando em ${await app.getUrl()}`);
 }
 
 bootstrap();

@@ -3,13 +3,12 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "api-gateway",
+      "name": "order-service",
       "dependencies": {
         "@nestjs/common": "^11.0.0",
         "@nestjs/core": "^11.0.0",
         "@nestjs/platform-fastify": "^11.0.0",
         "reflect-metadata": "^0.2.0",
-        "rxjs": "^7.8.1",
         "zod": "^4.1.13",
       },
       "devDependencies": {
