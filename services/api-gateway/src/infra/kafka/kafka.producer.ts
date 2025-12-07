@@ -1,4 +1,5 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
+import type { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { Kafka, type Producer } from "kafkajs";
 import type { OrderRequest } from "../../app/dtos/OrderRequest";
 
