@@ -1,8 +1,8 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { Kafka, type Consumer } from "kafkajs";
-import { createOrderSchema } from "../../app/dtos/CreateOrderRequest";
-import { CreateOrderUseCase } from "../../app/use-cases/CreateOrder";
+import { createOrderSchema } from "../../application/dtos/CreateOrderRequest";
+import { CreateOrderUseCase } from "../../application/use-cases/CreateOrder";
 
 @Injectable()
 export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
@@ -17,7 +17,7 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
     const brokers = (
       process.env.KAFKA_BROKERS ??
       process.env.KAFKA_BROKER ??
-      "localhost:9092"
+      "localhost:9094"
     )
       .split(",")
       .map((b) => b.trim())
@@ -80,7 +80,7 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
       topic: this.topic,
     });
 
-    // Permite campos extras vindos do producer (correlationId, createdAt, etc.)
+    // Permite campos extras (correlationId, createdAt, etc.)
     const parsed = createOrderSchema.passthrough().safeParse(payload);
     if (!parsed.success) {
       console.error("[order-service][KafkaConsumer] Payload inválido", {

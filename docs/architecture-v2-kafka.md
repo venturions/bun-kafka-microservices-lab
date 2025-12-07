@@ -20,9 +20,9 @@ Cliente → API Gateway ──Kafka──> Order Service (consumer)
 - **Publicação Kafka**: `KafkaProducerService` publica evento `order_created` no tópico configurado.
 - **Resposta**: retorna `202 Accepted` com `correlationId` e resumo do evento (não aguarda processamento).
 - **Camadas**:
-  - `OrdersController` (infra) recebe requisição, valida e chama o use case.
-  - `SubmitOrderUseCase` (app) orquestra publicação do evento.
-  - `KafkaProducerService` (infra) conecta ao Kafka e envia mensagens.
+  - `interface/http/nest/OrdersController` recebe requisição, valida (Zod) e chama o use case.
+  - `application/use-cases/SubmitOrder` orquestra a publicação do evento.
+  - `infrastructure/kafka/KafkaProducerService` conecta ao Kafka e envia mensagens.
 
 ### Order Service (`services/order-service`)
 
@@ -33,9 +33,10 @@ Cliente → API Gateway ──Kafka──> Order Service (consumer)
   - Validação Zod (`CreateOrderRequest`).
   - Chamada ao `CreateOrderUseCase` para persistir pedido.
 - **Camadas**:
-  - `KafkaConsumerService` (infra) recebe eventos e delega ao use case.
-  - `CreateOrderUseCase` (app) cria pedidos com status inicial `pending`.
-  - `InMemoryOrdersRepository` (infra) persiste em `Map`, preenchendo `createdAt`.
+  - `interface/kafka/KafkaConsumerService` recebe eventos, valida (Zod) e delega ao use case.
+  - `application/use-cases/CreateOrder` cria pedidos com status inicial `pending`.
+  - `infrastructure/persistence/InMemoryOrdersRepository` persiste em `Map`, preenchendo `createdAt`.
+  - `domain/` contém entidade e contratos (Order, OrdersRepository).
 - **Logs**: cada etapa loga `[order-service][...]` com `correlationId`.
 
 ---
@@ -70,7 +71,7 @@ O cluster roda em modo KRaft (sem Zookeeper), definido em `docker-compose.yml`:
 
 | Variável                      | Default                | Descrição                              |
 |-------------------------------|------------------------|----------------------------------------|
-| `KAFKA_BROKER` / `KAFKA_BROKERS` | `localhost:9092`     | Lista de brokers (separados por `,`)   |
+| `KAFKA_BROKER` / `KAFKA_BROKERS` | `localhost:9094`     | Lista de brokers (separados por `,`)   |
 | `KAFKA_CLIENT_ID`             | `api-gateway` / `order-service` | Identificador do cliente Kafka |
 | `KAFKA_TOPIC_ORDER_CREATED`   | `order_created`        | Tópico para eventos de pedido          |
 | `KAFKA_GROUP_ID`              | `order-service-group`  | Group ID do consumer                   |

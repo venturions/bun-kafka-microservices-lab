@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
-import { InMemoryOrdersRepository } from "./infra/persistence/InMemoryOrdersRepository";
-import { CreateOrderUseCase } from "./app/use-cases/CreateOrder";
-import { KafkaConsumerService } from "./infra/kafka/kafka.consumer";
+import { InMemoryOrdersRepository } from "./infrastructure/persistence/InMemoryOrdersRepository";
+import { CreateOrderUseCase } from "./application/use-cases/CreateOrder";
+import { KafkaConsumerService } from "./interface/kafka/kafka.consumer";
 
 @Module({
   providers: [

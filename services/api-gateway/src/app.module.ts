@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
-import { OrdersController } from "./infra/http/nest/orders.controller";
-import { SubmitOrderUseCase } from "./app/use-cases/SubmitOrder";
-import { KafkaProducerService } from "./infra/kafka/kafka.producer";
+import { SubmitOrderUseCase } from "./application/use-cases/SubmitOrder";
+import { KafkaProducerService } from "./infrastructure/kafka/kafka.producer";
+import { OrdersController } from "./interface/http/orders.controller";
 
 @Module({
   controllers: [OrdersController],

@@ -6,8 +6,8 @@ import {
   Inject,
   Post,
 } from "@nestjs/common";
-import { SubmitOrderUseCase } from "../../../app/use-cases/SubmitOrder";
-import { orderRequestSchema } from "../../../app/dtos/OrderRequest";
+import { orderRequestSchema } from "../../application/dtos/OrderRequest";
+import { SubmitOrderUseCase } from "../../application/use-cases/SubmitOrder";
 
 @Controller()
 export class OrdersController {

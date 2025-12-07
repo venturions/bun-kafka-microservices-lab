@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import type { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { Kafka, type Producer } from "kafkajs";
-import type { OrderRequest } from "../../app/dtos/OrderRequest";
+import type { OrderRequest } from "../../application/dtos/OrderRequest";
 
 export type OrderCreatedEvent = OrderRequest & {
   correlationId: string;
@@ -18,7 +18,7 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
     const brokers = (
       process.env.KAFKA_BROKERS ??
       process.env.KAFKA_BROKER ??
-      "localhost:9092"
+      "localhost:9094"
     )
       .split(",")
       .map((b) => b.trim())

@@ -3,7 +3,7 @@ import type { OrderRequest } from "../dtos/OrderRequest";
 import {
   KafkaProducerService,
   type OrderCreatedEvent,
-} from "../../infra/kafka/kafka.producer";
+} from "../../infrastructure/kafka/kafka.producer";
 
 @Injectable()
 export class SubmitOrderUseCase {

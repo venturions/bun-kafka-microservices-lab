@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { OrdersRepository } from "../../domain/repositories/OrdersRepository";
 import type { CreateOrderRequest } from "../dtos/CreateOrderRequest";
-import { InMemoryOrdersRepository } from "../../infra/persistence/InMemoryOrdersRepository";
+import { InMemoryOrdersRepository } from "../../infrastructure/persistence/InMemoryOrdersRepository";
 
 @Injectable()
 export class CreateOrderUseCase {
