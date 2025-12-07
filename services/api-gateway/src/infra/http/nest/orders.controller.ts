@@ -41,18 +41,18 @@ export class OrdersController {
       items: parsed.data.items.length,
       totalAmount: parsed.data.totalAmount,
     });
-    const order = await this.submitOrderUseCase.execute(
+    const event = await this.submitOrderUseCase.execute(
       parsed.data,
       resolvedCorrelationId
     );
 
     console.log(
-      "[api-gateway][OrdersController] Pedido enviado ao order-service",
+      "[api-gateway][OrdersController] Evento order_created enviado",
       {
         correlationId: resolvedCorrelationId,
-        orderId: order.id,
+        topic: process.env.KAFKA_TOPIC_ORDER_CREATED ?? "order_created",
       }
     );
-    return { correlationId: resolvedCorrelationId, order };
+    return { correlationId: resolvedCorrelationId, status: "accepted", event };
   }
 }

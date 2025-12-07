@@ -1,20 +1,20 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { OrderRequest } from "../dtos/OrderRequest";
 import {
-  HttpOrderServiceClient,
-  type OrderResponse,
-} from "../../infra/clients/orderServiceClient";
+  KafkaProducerService,
+  type OrderCreatedEvent,
+} from "../../infra/kafka/kafka.producer";
 
 @Injectable()
 export class SubmitOrderUseCase {
   constructor(
-    @Inject(HttpOrderServiceClient)
-    private readonly orderServiceClient: HttpOrderServiceClient
+    @Inject(KafkaProducerService)
+    private readonly kafkaProducer: KafkaProducerService
   ) {}
 
   async execute(payload: OrderRequest, correlationId: string) {
     console.log(
-      "[api-gateway][SubmitOrderUseCase] Preparando envio ao order-service",
+      "[api-gateway][SubmitOrderUseCase] Publicando evento order_created",
       {
         correlationId,
         customerId: payload.customerId,
@@ -23,17 +23,19 @@ export class SubmitOrderUseCase {
       }
     );
 
-    const order: OrderResponse = await this.orderServiceClient.createOrder(
-      payload,
-      correlationId
-    );
-
-    console.log("[api-gateway][SubmitOrderUseCase] order-service respondeu", {
+    const event: OrderCreatedEvent = {
+      ...payload,
       correlationId,
-      orderId: order.id,
-      status: order.status,
+      createdAt: new Date().toISOString(),
+    };
+
+    await this.kafkaProducer.publishOrderCreated(event);
+
+    console.log("[api-gateway][SubmitOrderUseCase] Evento publicado", {
+      correlationId,
+      topic: process.env.KAFKA_TOPIC_ORDER_CREATED ?? "order_created",
     });
 
-    return order;
+    return event;
   }
 }
