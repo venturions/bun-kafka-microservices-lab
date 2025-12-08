@@ -1,36 +1,36 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma, PrismaClient, type Order as PrismaOrder } from "@prisma/client";
-import { createOrderSchema } from "../../../application/dtos/CreateOrderRequest";
-import type { Order } from "../../../domain/Order";
+import type { Order } from "../../../domain/entities/Order";
+import { OrderFactory } from "../../../domain/factories/OrderFactory";
 import { OrdersRepository } from "../../../domain/repositories/OrdersRepository";
 
-const orderItemsSchema = createOrderSchema.shape.items;
-
 @Injectable()
-export class PrismaOrdersRepository implements OrdersRepository {
-  constructor(private readonly prisma: PrismaClient) {}
-
-  private mapToDomain(order: PrismaOrder): Order {
-    const parsedItems = orderItemsSchema.parse(JSON.parse(order.items));
-
-    return {
-      id: order.id,
-      customerId: order.customerId,
-      items: parsedItems,
-      totalAmount: Number(order.totalAmount),
-      status: order.status as Order["status"],
-      createdAt: order.createdAt,
-    };
+export class PrismaOrdersRepository extends OrdersRepository {
+  constructor(private readonly prisma: PrismaClient) {
+    super();
   }
 
-  async create(data: Omit<Order, "createdAt">): Promise<Order> {
+  private mapToDomain(order: PrismaOrder): Order {
+    return OrderFactory.fromPersistence({
+      id: order.id,
+      customerId: order.customerId,
+      items: order.items,
+      totalAmount: Number(order.totalAmount),
+      status: order.status,
+      createdAt: order.createdAt,
+    });
+  }
+
+  async create(order: Order): Promise<Order> {
+    const data = OrderFactory.toPersistence(order);
     const created = await this.prisma.order.create({
       data: {
         id: data.id,
         customerId: data.customerId,
-        items: JSON.stringify(orderItemsSchema.parse(data.items)),
+        items: data.items,
         totalAmount: new Prisma.Decimal(data.totalAmount),
         status: data.status,
+        createdAt: data.createdAt,
       },
     });
 

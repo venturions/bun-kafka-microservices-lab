@@ -1,4 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
+import { OrderFactory } from "../../domain/factories/OrderFactory";
 import { OrdersRepository } from "../../domain/repositories/OrdersRepository";
 import { createOrderSchema, type CreateOrderRequest } from "../dtos/CreateOrderRequest";
 
@@ -16,13 +17,14 @@ export class CreateOrderUseCase {
       items: parsed.items.length,
       totalAmount: parsed.totalAmount,
     });
-    const order = await this.ordersRepository.create({
+    const orderEntity = OrderFactory.fromDTO({
       id: crypto.randomUUID(),
       customerId: parsed.customerId,
       items: parsed.items,
       totalAmount: parsed.totalAmount,
-      status: "pending",
     });
+
+    const order = await this.ordersRepository.create(orderEntity);
 
     console.log("[order-service][CreateOrderUseCase] Order persisted", {
       orderId: order.id,

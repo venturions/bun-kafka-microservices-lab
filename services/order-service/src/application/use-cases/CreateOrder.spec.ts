@@ -43,6 +43,7 @@ describe("CreateOrderUseCase", () => {
     expect(order.id).toBeDefined();
     expect(order.status).toBe("pending");
     expect(order.items).toHaveLength(1);
+    expect(order.totalAmount.amount).toBe(payload.totalAmount);
     expect(order.createdAt).toBeInstanceOf(Date);
 
     const stored = await prisma.order.findUnique({ where: { id: order.id } });

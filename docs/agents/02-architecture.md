@@ -229,3 +229,7 @@ Sempre incentive:
   - lógica de domínio para `domain/`
   - orquestração de casos de uso para `application/`
   - detalhes de tecnologia para `infra/`.
+### Notas sobre entidades, VOs e factories
+
+- **Value Objects (VOs)**: tipos imutaveis com invariantes e sem identidade (ex.: `Money`, `OrderItem`). Encapsulam validacoes/semantica; serializacao/deserializacao ficam em adapters/factories.
+- **Factories de dominio**: criam/reidratam entidades a partir de DTOs ou persistencia (`fromDTO`, `fromPersistence`), sem conhecer ORM/HTTP/Kafka. Se precisar de clock/ID externo, injete interfaces em vez de acoplar.
