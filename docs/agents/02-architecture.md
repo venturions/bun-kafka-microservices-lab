@@ -229,6 +229,12 @@ Sempre incentive:
   - lógica de domínio para `domain/`
   - orquestração de casos de uso para `application/`
   - detalhes de tecnologia para `infra/`.
+
+### Notas sobre entidades, VOs, factories e DTOs
+
+- **Value Objects (VOs)**: tipos imutáveis com invariantes e sem identidade (ex.: `Money`, `OrderItem`). Encapsulam validações/semântica; serialização/deserialização ficam em adapters/factories.
+- **Factories de domínio**: criam/reidratam entidades a partir de DTOs ou persistência (`fromDTO`, `fromPersistence`), sem conhecer ORM/HTTP/Kafka. Se precisar de clock/ID externo, injete interfaces em vez de acoplar.
+- **DTOs nas bordas**: controllers/consumers recebem DTOs (validados, ex.: Zod) e convertem para entidades/VOs dentro dos use cases; repositórios retornam entidades, e use cases expõem DTOs de resposta para a camada externa.
 ### Notas sobre entidades, VOs e factories
 
 - **Value Objects (VOs)**: tipos imutaveis com invariantes e sem identidade (ex.: `Money`, `OrderItem`). Encapsulam validacoes/semantica; serializacao/deserializacao ficam em adapters/factories.

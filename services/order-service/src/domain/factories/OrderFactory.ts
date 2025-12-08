@@ -3,6 +3,7 @@ import { OrderStatus } from "../OrderStatus";
 import { Order } from "../entities/Order";
 import { Money } from "../value-objects/Money";
 import { OrderItem } from "../value-objects/OrderItem";
+import type { CreateOrderResponse } from "../../application/dtos/CreateOrderResponse";
 
 export interface OrderCreateInput {
   id: string;
@@ -67,6 +68,20 @@ export class OrderFactory {
       id: order.id,
       customerId: order.customerId,
       items: JSON.stringify(order.items),
+      totalAmount: order.totalAmount.amount,
+      status: order.status,
+      createdAt: order.createdAt,
+    };
+  }
+
+  static toResponse(order: Order): CreateOrderResponse {
+    return {
+      id: order.id,
+      customerId: order.customerId,
+      items: order.items.map((item) => ({
+        sku: item.sku,
+        quantity: item.quantity,
+      })),
       totalAmount: order.totalAmount.amount,
       status: order.status,
       createdAt: order.createdAt,
