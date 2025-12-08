@@ -1,9 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
+import { OrderEvents, type OrderCreatedPayload } from "@lab/contracts";
 import type { OrderRequest } from "../dtos/OrderRequest";
-import {
-  KafkaProducerService,
-  type OrderCreatedEvent,
-} from "../../infrastructure/kafka/kafka.producer";
+import { KafkaProducerService } from "../../infrastructure/kafka/kafka.producer";
 
 @Injectable()
 export class SubmitOrderUseCase {
@@ -23,7 +21,7 @@ export class SubmitOrderUseCase {
       }
     );
 
-    const event: OrderCreatedEvent = {
+    const event: OrderCreatedPayload = {
       ...payload,
       correlationId,
       createdAt: new Date().toISOString(),
@@ -33,7 +31,7 @@ export class SubmitOrderUseCase {
 
     console.log("[api-gateway][SubmitOrderUseCase] Event published", {
       correlationId,
-      topic: process.env.KAFKA_TOPIC_ORDER_CREATED ?? "order_created",
+      topic: process.env.KAFKA_TOPIC_ORDER_CREATED ?? OrderEvents.OrderCreated,
     });
 
     return event;

@@ -35,6 +35,7 @@ describe("KafkaConsumerService.handleMessage", () => {
       items: [{ sku: "ITEM-1", quantity: 1 }],
       totalAmount: 50,
       correlationId: "corr-1",
+      createdAt: new Date().toISOString(),
     };
 
     // Act
@@ -58,6 +59,8 @@ describe("KafkaConsumerService.handleMessage", () => {
       customerId: "invalid-uuid",
       items: [],
       totalAmount: -10,
+      correlationId: "corr-2",
+      createdAt: "invalid-date",
     };
 
     // Act

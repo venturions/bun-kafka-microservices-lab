@@ -1,9 +1,8 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { Kafka, type Consumer } from "kafkajs";
-import { createOrderSchema } from "../../application/dtos/CreateOrderRequest";
+import { orderCreatedSchema, OrderEvents } from "@lab/contracts";
 import { CreateOrderUseCase } from "../../application/use-cases/CreateOrder";
-import { OrderEvents } from "../../domain/events/OrderEvents";
 
 @Injectable()
 export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
@@ -81,8 +80,7 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
       topic: this.topic,
     });
 
-    // Permite campos extras (correlationId, createdAt, etc.)
-    const parsed = createOrderSchema.passthrough().safeParse(payload);
+    const parsed = orderCreatedSchema.safeParse(payload);
     if (!parsed.success) {
       console.error("[order-service][KafkaConsumer] Invalid payload", {
         correlationId,
@@ -92,7 +90,11 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
     }
 
     try {
-      const order = await this.createOrderUseCase.execute(parsed.data);
+      const order = await this.createOrderUseCase.execute({
+        customerId: parsed.data.customerId,
+        items: parsed.data.items,
+        totalAmount: parsed.data.totalAmount,
+      });
       console.log("[order-service][KafkaConsumer] Order created successfully", {
         correlationId,
         orderId: order.id,

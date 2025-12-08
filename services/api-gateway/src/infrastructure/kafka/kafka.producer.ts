@@ -1,13 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import type { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { Kafka, type Producer } from "kafkajs";
+import { OrderEvents, type OrderCreatedPayload } from "@lab/contracts";
 import type { OrderRequest } from "../../application/dtos/OrderRequest";
-import { OrderEvents } from "../../domain/events/OrderEvents";
-
-export type OrderCreatedEvent = OrderRequest & {
-  correlationId: string;
-  createdAt: string;
-};
 
 @Injectable()
 export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
@@ -41,7 +36,7 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
     await this.producer.disconnect();
   }
 
-  async publishOrderCreated(event: OrderCreatedEvent) {
+  async publishOrderCreated(event: OrderCreatedPayload) {
     await this.producer.send({
       topic: this.topic,
       messages: [

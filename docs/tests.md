@@ -21,3 +21,4 @@ Guia rapido para rodar e entender a suite de testes do laboratorio com Bun + Vit
 - `vitest.config.ts` em cada servico define ambiente Node, variaveis de teste e inclui apenas os arquivos em `tests/**/*.test.ts`.
 - Para manter o estado limpo, evite rodar `prisma db push` com `DATABASE_URL` apontando para um arquivo real se nao precisar persistir dados.
 - Se editar o schema Prisma, rode `bun run prisma:generate` dentro do `order-service` antes dos testes.
+- Pacote de contratos: antes de rodar os serviços pela primeira vez, execute `cd packages/contracts && bun link` uma vez. Em cada serviço, `bun run dev` ja chama `bun link @lab/contracts` via `predev`; se for rodar apenas testes/start em um ambiente novo, rode manualmente `bun link @lab/contracts` no serviço para garantir que o pacote esteja resolvido.

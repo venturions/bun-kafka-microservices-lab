@@ -1,9 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type { OrderRequest } from "../dtos/OrderRequest";
-import type {
-  KafkaProducerService,
-  OrderCreatedEvent,
-} from "../../infrastructure/kafka/kafka.producer";
+import type { KafkaProducerService } from "../../infrastructure/kafka/kafka.producer";
+import type { OrderCreatedPayload } from "@lab/contracts";
 import { SubmitOrderUseCase } from "./SubmitOrder";
 
 const payload: OrderRequest = {
@@ -16,7 +14,7 @@ describe("SubmitOrderUseCase", () => {
   it("publishes event with correlation id and returns payload", async () => {
     // Arrange
     const publishOrderCreated = vi.fn(
-      async (_event: OrderCreatedEvent): Promise<void> => {}
+      async (_event: OrderCreatedPayload): Promise<void> => {}
     );
     const useCase = new SubmitOrderUseCase(
       { publishOrderCreated } as unknown as KafkaProducerService

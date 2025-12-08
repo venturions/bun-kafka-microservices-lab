@@ -3,21 +3,23 @@
   "type": "module",
   "scripts": {
     "start": "bun run src/main.ts",
+    "predev": "bun link @lab/contracts",
     "dev": "bun --watch src/main.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "prisma:generate": "prisma generate",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
-  "dependencies": {
-    "@nestjs/common": "^11.0.0",
-    "@nestjs/core": "^11.0.0",
-    "@nestjs/platform-fastify": "^11.0.0",
-    "@prisma/client": "^5.19.1",
-    "kafkajs": "^2.2.4",
-    "reflect-metadata": "^0.2.0",
-    "zod": "^4.1.13"
-  },
+    "dependencies": {
+        "@nestjs/common": "^11.0.0",
+        "@nestjs/core": "^11.0.0",
+        "@nestjs/platform-fastify": "^11.0.0",
+        "@prisma/client": "^5.19.1",
+        "@lab/contracts": "file:../../packages/contracts",
+        "kafkajs": "^2.2.4",
+        "reflect-metadata": "^0.2.0",
+        "zod": "^4.1.13"
+    },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/node": "^22.7.5",

@@ -46,13 +46,10 @@ export class OrdersController {
       resolvedCorrelationId
     );
 
-    console.log(
-      "[api-gateway][OrdersController] Evento order_created enviado",
-      {
-        correlationId: resolvedCorrelationId,
-        topic: process.env.KAFKA_TOPIC_ORDER_CREATED ?? "order_created",
-      }
-    );
+    console.log("[api-gateway][OrdersController] order_created event sent", {
+      correlationId: resolvedCorrelationId,
+      topic: process.env.KAFKA_TOPIC_ORDER_CREATED ?? "order_created",
+    });
     return { correlationId: resolvedCorrelationId, status: "accepted", event };
   }
 }
