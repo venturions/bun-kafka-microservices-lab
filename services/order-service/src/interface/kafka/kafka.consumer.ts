@@ -3,11 +3,12 @@ import type { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { Kafka, type Consumer } from "kafkajs";
 import { createOrderSchema } from "../../application/dtos/CreateOrderRequest";
 import { CreateOrderUseCase } from "../../application/use-cases/CreateOrder";
+import { OrderEvents } from "../../domain/events/OrderEvents";
 
 @Injectable()
 export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
   private readonly topic =
-    process.env.KAFKA_TOPIC_ORDER_CREATED ?? "order_created";
+    process.env.KAFKA_TOPIC_ORDER_CREATED ?? OrderEvents.OrderCreated;
   private readonly consumer: Consumer;
 
   constructor(
