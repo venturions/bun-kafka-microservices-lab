@@ -1,13 +1,10 @@
 import { Module } from "@nestjs/common";
-import { InMemoryOrdersRepository } from "./infrastructure/persistence/InMemoryOrdersRepository";
 import { CreateOrderUseCase } from "./application/use-cases/CreateOrder";
 import { KafkaConsumerService } from "./interface/kafka/kafka.consumer";
+import { DatabaseModule } from "./infrastructure/database/database.module";
 
 @Module({
-  providers: [
-    InMemoryOrdersRepository,
-    CreateOrderUseCase,
-    KafkaConsumerService,
-  ],
+  imports: [DatabaseModule],
+  providers: [CreateOrderUseCase, KafkaConsumerService],
 })
 export class AppModule {}

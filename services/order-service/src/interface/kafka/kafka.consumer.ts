@@ -38,7 +38,7 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
     await this.consumer.subscribe({ topic: this.topic, fromBeginning: false });
 
     console.log(
-      `[order-service][KafkaConsumer] Conectado e assinando tópico: ${this.topic}`
+      `[order-service][KafkaConsumer] Conectado e assinando topico: ${this.topic}`
     );
 
     await this.consumer.run({
@@ -52,7 +52,7 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
     await this.consumer.disconnect();
   }
 
-  private async handleMessage(message: {
+  async handleMessage(message: {
     key?: Buffer | null;
     value: Buffer | null;
   }) {
@@ -66,7 +66,7 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
     try {
       payload = JSON.parse(rawValue);
     } catch {
-      console.error("[order-service][KafkaConsumer] JSON inválido", {
+      console.error("[order-service][KafkaConsumer] JSON invalido", {
         rawValue,
       });
       return;
@@ -75,7 +75,7 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
     const correlationId =
       (payload as { correlationId?: string }).correlationId ?? "unknown";
 
-    console.log("[order-service][KafkaConsumer] Evento recebido", {
+    console.log("[order-service][KafkaConsumer] Event received", {
       correlationId,
       topic: this.topic,
     });
@@ -83,7 +83,7 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
     // Permite campos extras (correlationId, createdAt, etc.)
     const parsed = createOrderSchema.passthrough().safeParse(payload);
     if (!parsed.success) {
-      console.error("[order-service][KafkaConsumer] Payload inválido", {
+      console.error("[order-service][KafkaConsumer] Invalid payload", {
         correlationId,
         issues: parsed.error.issues,
       });
@@ -92,13 +92,13 @@ export class KafkaConsumerService implements OnModuleInit, OnModuleDestroy {
 
     try {
       const order = await this.createOrderUseCase.execute(parsed.data);
-      console.log("[order-service][KafkaConsumer] Pedido criado com sucesso", {
+      console.log("[order-service][KafkaConsumer] Order created successfully", {
         correlationId,
         orderId: order.id,
         status: order.status,
       });
     } catch (err) {
-      console.error("[order-service][KafkaConsumer] Erro ao criar pedido", {
+      console.error("[order-service][KafkaConsumer] Error creating order", {
         correlationId,
         error: err instanceof Error ? err.message : err,
       });

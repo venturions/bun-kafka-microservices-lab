@@ -25,7 +25,7 @@ export class OrdersController {
 
     if (!parsed.success) {
       throw new BadRequestException({
-        message: "Payload inválido",
+        message: "Invalid payload",
         issues: parsed.error.issues.map((issue) => ({
           path: issue.path.join("."),
           message: issue.message,
@@ -35,7 +35,7 @@ export class OrdersController {
     }
 
     const resolvedCorrelationId = correlationId ?? crypto.randomUUID();
-    console.log("[api-gateway][OrdersController] Recebendo requisição", {
+    console.log("[api-gateway][OrdersController] Handling request", {
       correlationId: resolvedCorrelationId,
       customerId: parsed.data.customerId,
       items: parsed.data.items.length,

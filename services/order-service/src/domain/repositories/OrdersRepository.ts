@@ -1,7 +1,7 @@
 import type { Order } from "../Order";
 
-export interface OrdersRepository {
-  create(data: Omit<Order, "createdAt">): Promise<Order>;
-  findById(id: string): Promise<Order | null>;
-  list(): Promise<Order[]>;
+export abstract class OrdersRepository {
+  abstract create(data: Omit<Order, "createdAt">): Promise<Order>;
+  abstract findById(id: string): Promise<Order | null>;
+  abstract list(): Promise<Order[]>;
 }

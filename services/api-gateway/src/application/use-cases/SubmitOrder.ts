@@ -14,7 +14,7 @@ export class SubmitOrderUseCase {
 
   async execute(payload: OrderRequest, correlationId: string) {
     console.log(
-      "[api-gateway][SubmitOrderUseCase] Publicando evento order_created",
+      "[api-gateway][SubmitOrderUseCase] Publishing order_created event",
       {
         correlationId,
         customerId: payload.customerId,
@@ -31,7 +31,7 @@ export class SubmitOrderUseCase {
 
     await this.kafkaProducer.publishOrderCreated(event);
 
-    console.log("[api-gateway][SubmitOrderUseCase] Evento publicado", {
+    console.log("[api-gateway][SubmitOrderUseCase] Event published", {
       correlationId,
       topic: process.env.KAFKA_TOPIC_ORDER_CREATED ?? "order_created",
     });

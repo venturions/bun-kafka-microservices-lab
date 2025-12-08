@@ -1,33 +1,30 @@
 import { Inject, Injectable } from "@nestjs/common";
-import type { OrdersRepository } from "../../domain/repositories/OrdersRepository";
-import type { CreateOrderRequest } from "../dtos/CreateOrderRequest";
-import { InMemoryOrdersRepository } from "../../infrastructure/persistence/InMemoryOrdersRepository";
+import { OrdersRepository } from "../../domain/repositories/OrdersRepository";
+import { createOrderSchema, type CreateOrderRequest } from "../dtos/CreateOrderRequest";
 
 @Injectable()
 export class CreateOrderUseCase {
   constructor(
-    @Inject(InMemoryOrdersRepository)
+    @Inject(OrdersRepository)
     private readonly ordersRepository: OrdersRepository
   ) {}
 
   async execute(payload: CreateOrderRequest) {
-    console.log(
-      "[order-service][CreateOrderUseCase] Iniciando criação do pedido",
-      {
-        customerId: payload.customerId,
-        items: payload.items.length,
-        totalAmount: payload.totalAmount,
-      }
-    );
+    const parsed = createOrderSchema.parse(payload);
+    console.log("[order-service][CreateOrderUseCase] Starting order creation", {
+      customerId: parsed.customerId,
+      items: parsed.items.length,
+      totalAmount: parsed.totalAmount,
+    });
     const order = await this.ordersRepository.create({
       id: crypto.randomUUID(),
-      customerId: payload.customerId,
-      items: payload.items,
-      totalAmount: payload.totalAmount,
+      customerId: parsed.customerId,
+      items: parsed.items,
+      totalAmount: parsed.totalAmount,
       status: "pending",
     });
 
-    console.log("[order-service][CreateOrderUseCase] Pedido persistido", {
+    console.log("[order-service][CreateOrderUseCase] Order persisted", {
       orderId: order.id,
       status: order.status,
     });
